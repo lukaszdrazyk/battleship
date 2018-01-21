@@ -65,9 +65,10 @@ class BaseElement{
     };
 }
 class Cell extends BaseElement{
-    constructor ({isShip}){
+    constructor ({isShip, gamebord}){
       super ();
       this.isShip = isShip;
+      this.gamebord = gamebord;
       this.state = 'unknown';
       this.onClick = this.fireTorpido;
     }
@@ -84,7 +85,21 @@ class Cell extends BaseElement{
 
     fireTorpido(){
         if (this.isShip){
+            
+            if(this.state !== 'unknown'){
+               return false;
+            }
+           
+            this.gamebord.score += 1;
+          //  gameResult.innerHTML = '';
+            while (gameResult.firstChild){
+                gameResult.removeChild(gameResult.firstChild);
+            }
+            gameResult.append(`${this.gamebord.score}/${this.gamebord.totalScore}`)
             this.setState('hit');
+            if(this.state !== 'uknown'){
+               return false;
+            }
         } else {
             this.setState('miss');
         }
@@ -106,14 +121,16 @@ class Gameboard extends BaseElement{
         this.columnNumber = size;
         this.fleet = gameboardArray[Math.floor(Math.random() * gameboardArray.length)];
         this.score = 0;
-        this.totalScore = this.getTotalScore((this.fleet));
+        this.totalScore = this.getTotalScore(this.fleet);
         for (let rowIndex= 0; rowIndex < this.rowNumber; rowIndex++){
             for (let columnIndex = 0; columnIndex < this.columnNumber; columnIndex++) {
             this.cells.push(new Cell({
-                isShip: this.fleet.array[rowIndex][columnIndex] === 1 ? true : false //zapis liniowy if else
+                isShip: this.fleet.array[rowIndex][columnIndex] === 1 ? true : false,  //zapis liniowy if else
+                gamebord: this 
             }));
                 }
         }
+        gameResult.append(`${this.score}/${this.totalScore}`);
     }
     createElement(){
         const gameboard = document.createElement('div');
@@ -140,7 +157,7 @@ class Gameboard extends BaseElement{
        });
         return total;
 
-
+        
 
 }
 }
