@@ -65,10 +65,10 @@ class BaseElement{
     };
 }
 class Cell extends BaseElement{
-    constructor ({isShip, gamebord}){
+    constructor ({isShip, gameboard}){
       super ();
       this.isShip = isShip;
-      this.gamebord = gamebord;
+      this.gameboard = gameboard;
       this.state = 'unknown';
       this.onClick = this.fireTorpido;
     }
@@ -84,20 +84,24 @@ class Cell extends BaseElement{
     }
 
     fireTorpido(){
+        this.gameboard.totalClicks += 1;
+        if (this.gameboard.totalClicks > 30){
+            alert('Przegrales');
+        }
         if (this.isShip){
             
             if(this.state !== 'unknown'){
                return false;
             }
            
-            this.gamebord.score += 1;
+            this.gameboard.score += 1;
           //  gameResult.innerHTML = '';
             while (gameResult.firstChild){
                 gameResult.removeChild(gameResult.firstChild);
             }
-            gameResult.append(`${this.gamebord.score}/${this.gamebord.totalScore}`)
+            gameResult.append(`${this.gameboard.score}/${this.gameboard.totalScore}/${this.gameboard.totalClicks}`)
             this.setState('hit');
-            if(this.state !== 'uknown'){
+            if(this.state !== 'unknown'){
                return false;
             }
         } else {
@@ -116,6 +120,7 @@ class Cell extends BaseElement{
 class Gameboard extends BaseElement{
     constructor(size){
         super();
+        this.totalClicks = 0;
         this.cells = [];
         this.rowNumber = size;
         this.columnNumber = size;
@@ -126,11 +131,11 @@ class Gameboard extends BaseElement{
             for (let columnIndex = 0; columnIndex < this.columnNumber; columnIndex++) {
             this.cells.push(new Cell({
                 isShip: this.fleet.array[rowIndex][columnIndex] === 1 ? true : false,  //zapis liniowy if else
-                gamebord: this 
+                gameboard: this 
             }));
                 }
         }
-        gameResult.append(`${this.score}/${this.totalScore}`);
+        gameResult.append(`${this.score}/${this.totalScore}/${this.totalClicks}`);
     }
     createElement(){
         const gameboard = document.createElement('div');
